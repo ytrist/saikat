@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Saikat — UX/UI Designer</title>
+<meta name="description" content="Saikat is a UX/UI Designer from Dhaka, Bangladesh, crafting intuitive digital products for web and mobile." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600&display=swap" rel="stylesheet" />
+<style>
+  /* ---- RESET & BASE ---- */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #080807;
+    --bg2:     #101009;
+    --text:    #ede8d8;
+    --muted:   #7a7760;
+    --accent:  #c9f542;
+    --accent2: #f5a623;
+    --border:  rgba(237,232,216,0.1);
+    --ff-head: 'Bebas Neue', sans-serif;
+    --ff-body: 'Bricolage Grotesque', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--ff-body);
+    font-size: 16px;
+    line-height: 1.6;
+    cursor: none;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; width: 100%; object-fit: cover; }
+  ::selection { background: var(--accent); color: #080807; }
+
+  /* ---- NOISE OVERLAY ---- */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: .45;
+  }
+
+  /* ---- CUSTOM CURSOR ---- */
+  #cursor-dot {
+    width: 6px; height: 6px; background: var(--accent);
+    border-radius: 50%; position: fixed; pointer-events: none;
+    z-index: 10000; transform: translate(-50%,-50%);
+    transition: transform .1s;
+  }
+  #cursor-ring {
+    width: 36px; height: 36px; border: 1.5px solid rgba(201,245,66,.5);
+    border-radius: 50%; position: fixed; pointer-events: none;
+    z-index: 9999; transform: translate(-50%,-50%);
+    transition: transform .15s ease, width .25s ease, height .25s ease, border-color .25s ease;
+  }
+  body:has(a:hover) #cursor-ring,
+  body:has(button:hover) #cursor-ring {
+    width: 56px; height: 56px; border-color: var(--accent);
+  }
+
+  /* ---- LOADER ---- */
+  #loader {
+    position: fixed; inset: 0; background: var(--bg); z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 1.5rem;
+    animation: loaderFade .6s ease forwards;
+    animation-delay: 2s;
+  }
+  @keyframes loaderFade { to { opacity: 0; pointer-events: none; } }
+  .loader-text {
+    font-family: var(--ff-head); font-size: clamp(2rem, 8vw, 5rem);
+    font-weight: 800; letter-spacing: -2px; overflow: hidden;
+  }
+  .loader-text span {
+    display: inline-block;
+    animation: loaderReveal .7s cubic-bezier(.22,1,.36,1) forwards;
+    transform: translateY(110%);
+  }
+  .loader-text span:nth-child(1) { animation-delay: .1s; }
+  .loader-text span:nth-child(2) { animation-delay: .2s; }
+  .loader-text span:nth-child(3) { animation-delay: .3s; }
+  .loader-text span:nth-child(4) { animation-delay: .4s; }
+  .loader-text span:nth-child(5) { animation-delay: .5s; }
+  .loader-text span:nth-child(6) { animation-delay: .6s; }
+  @keyframes loaderReveal { to { transform: translateY(0); } }
+  .loader-bar { width: 200px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+  .loader-bar::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--accent);
+    animation: loaderBar 1.8s ease forwards;
+  }
+  @keyframes loaderBar { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); } }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.25rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid transparent;
+    transition: border-color .3s, background .3s, backdrop-filter .3s;
+  }
+  nav.scrolled {
+    background: rgba(8,8,7,.8); backdrop-filter: blur(20px);
+    border-color: var(--border);
+  }
+  .nav-logo {
+    font-family: var(--ff-head); font-weight: 800; font-size: 1.1rem;
+    letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; align-items: center; gap: 2.5rem; }
+  .nav-links a {
+    font-size: .875rem; font-weight: 500; letter-spacing: .02em;
+    color: var(--muted); transition: color .2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+    height: 1px; background: var(--accent); transform: scaleX(0);
+    transform-origin: left; transition: transform .3s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cta {
+    background: var(--accent); color: #080807 !important;
+    padding: .5rem 1.25rem; border-radius: 100px;
+    font-weight: 600 !important; font-size: .875rem !important;
+    transition: transform .2s, box-shadow .2s !important;
+  }
+  .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,245,66,.3) !important; }
+  .nav-cta::after { display: none !important; }
+
+  /* ---- HERO ---- */
+  #hero {
+    min-height: 100svh; display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 0 2.5rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-grid-num {
+    position: absolute; top: 8rem; right: 2.5rem;
+    font-family: var(--ff-head); font-size: clamp(8rem, 20vw, 18rem);
+    font-weight: 800; color: rgba(237,232,216,.04);
+    line-height: 1; pointer-events: none; user-select: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: rgba(201,245,66,.08); border: 1px solid rgba(201,245,66,.2);
+    border-radius: 100px; padding: .4rem 1rem;
+    font-size: .8rem; font-weight: 500; color: var(--accent);
+    margin-bottom: 2rem; width: fit-content;
+    animation: fadeUp .8s ease forwards; opacity: 0; animation-delay: 2.1s;
+  }
+  .hero-badge::before {
+    content: ''; width: 7px; height: 7px; background: var(--accent);
+    border-radius: 50%; animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .hero-headline {
+    font-family: var(--ff-head); font-weight: 800;
+    font-size: clamp(3.5rem, 9vw, 9rem);
+    line-height: .95; letter-spacing: -3px;
+    overflow: hidden;
+  }
+  .hero-headline .line { overflow: hidden; }
+  .hero-headline .word {
+    display: inline-block;
+    animation: fadeUp .9s cubic-bezier(.22,1,.36,1) forwards;
+    transform: translateY(110%); opacity: 0;
+  }
+  .hero-headline .word:nth-child(1) { animation-delay: 2.15s; }
+  .hero-headline .word:nth-child(2) { animation-delay: 2.25s; }
+  .hero-headline .word:nth-child(3) { animation-delay: 2.35s; }
+  .hero-headline .word:nth-child(4) { animation-delay: 2.45s; }
+  .accent-word { color: var(--accent); font-style: italic; }
+  .hero-sub {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-top: 3rem; gap: 2rem; flex-wrap: wrap;
+    animation: fadeUp .8s ease forwards; opacity: 0; animation-delay: 2.5s;
+  }
+  .hero-desc {
+    max-width: 440px; color: var(--muted); font-size: 1.1rem;
+    line-height: 1.7; font-weight: 300;
+  }
+  .hero-desc strong { color: var(--text); font-weight: 500; }
+  .hero-actions { display: flex; gap: 1rem; align-items: center; }
+  .btn-primary {
+    background: var(--accent); color: #080807; border: none;
+    padding: .85rem 2rem; border-radius: 100px; font-family: var(--ff-body);
+    font-size: .95rem; font-weight: 600; cursor: none;
+    transition: transform .2s, box-shadow .2s;
+    display: inline-flex; align-items: center; gap: .5rem;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,245,66,.3); }
+  .btn-outline {
+    border: 1px solid var(--border); color: var(--text); background: transparent;
+    padding: .85rem 2rem; border-radius: 100px; font-family: var(--ff-body);
+    font-size: .95rem; font-weight: 500; cursor: none;
+    transition: border-color .2s, background .2s;
+    display: inline-flex; align-items: center; gap: .5rem;
+  }
+  .btn-outline:hover { border-color: var(--text); background: rgba(255,255,255,.04); }
+  .hero-scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: .5rem;
+    color: var(--muted); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
+    animation: fadeUp .8s ease forwards; opacity: 0; animation-delay: 2.7s;
+  }
+  .scroll-line {
+    width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--muted));
+    animation: scrollLine 2s ease infinite; animation-delay: 3s;
+  }
+  @keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
+
+  /* ---- MARQUEE ---- */
+  .marquee-section {
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    padding: 1.1rem 0; overflow: hidden;
+    background: var(--bg2);
+  }
+  .marquee-track {
+    display: flex; width: max-content;
+    animation: marquee 24s linear infinite;
+  }
+  .marquee-track:hover { animation-play-state: paused; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .marquee-item {
+    white-space: nowrap; padding: 0 2rem;
+    font-family: var(--ff-head); font-size: .8rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+    display: flex; align-items: center; gap: 2rem;
+  }
+  .marquee-item .dot { color: var(--accent); font-size: 1.2rem; }
+
+  /* ---- SECTION COMMONS ---- */
+  .section { padding: 7rem 2.5rem; }
+  .section-label {
+    display: flex; align-items: center; gap: 1rem;
+    font-size: .75rem; font-weight: 700; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem;
+  }
+  .section-label::before {
+    content: ''; width: 2rem; height: 1px; background: var(--accent);
+  }
+  .section-heading {
+    font-family: var(--ff-head); font-weight: 800;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    letter-spacing: -1.5px; line-height: 1.05;
+  }
+  .section-heading em { color: var(--accent); font-style: italic; }
+
+  /* ---- REVEAL ANIMATION ---- */
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-d1 { transition-delay: .1s; }
+  .reveal-d2 { transition-delay: .2s; }
+  .reveal-d3 { transition-delay: .3s; }
+  .reveal-d4 { transition-delay: .4s; }
+
+  /* ---- ABOUT ---- */
+  #about { border-top: 1px solid var(--border); }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
+    margin-top: 4rem; align-items: start;
+  }
+  .about-img-wrap {
+    position: relative; aspect-ratio: 4/5; overflow: hidden; border-radius: 4px;
+  }
+  .about-img-wrap img { height: 100%; transition: transform .5s ease; }
+  .about-img-wrap:hover img { transform: scale(1.03); }
+  .about-img-badge {
+    position: absolute; bottom: 1.5rem; left: 1.5rem;
+    background: var(--accent); color: #080807;
+    padding: .6rem 1.2rem; border-radius: 100px;
+    font-family: var(--ff-head); font-size: .85rem; font-weight: 700;
+  }
+  .about-content { padding-top: 2rem; }
+  .about-content p {
+    color: var(--muted); font-size: 1.05rem; line-height: 1.8;
+    font-weight: 300; margin-bottom: 1.5rem;
+  }
+  .about-content p strong { color: var(--text); font-weight: 500; }
+  .about-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; margin-top: 3rem; padding-top: 3rem;
+    border-top: 1px solid var(--border);
+  }
+  .stat-item {}
+  .stat-num {
+    font-family: var(--ff-head); font-size: 2.5rem; font-weight: 800;
+    color: var(--accent); letter-spacing: -1px;
+  }
+  .stat-label { color: var(--muted); font-size: .85rem; margin-top: .2rem; }
+  .tools-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 2.5rem; }
+  .tool-chip {
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: .4rem 1rem; font-size: .8rem; color: var(--muted);
+    transition: border-color .2s, color .2s;
+  }
+  .tool-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---- PROJECTS ---- */
+  #work { border-top: 1px solid var(--border); }
+  .filter-row {
+    display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 3rem;
+  }
+  .filter-btn {
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: .45rem 1.1rem; font-family: var(--ff-body);
+    font-size: .85rem; color: var(--muted); background: transparent;
+    cursor: none; transition: all .2s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--accent); border-color: var(--accent);
+    color: #080807; font-weight: 600;
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px; margin-top: 3rem;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .project-card {
+    position: relative; overflow: hidden; aspect-ratio: 4/3;
+    background: var(--bg2); cursor: none;
+    transition: opacity .3s;
+  }
+  .project-card.hidden { display: none; }
+  .project-card img {
+    height: 100%; transition: transform .5s cubic-bezier(.22,1,.36,1);
+  }
+  .project-card:hover img { transform: scale(1.08); }
+  .project-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,8,7,.95) 0%, rgba(8,8,7,.3) 50%, transparent 100%);
+    opacity: 0; transition: opacity .3s; display: flex;
+    flex-direction: column; justify-content: flex-end; padding: 1.5rem;
+  }
+  .project-card:hover .project-card-overlay { opacity: 1; }
+  .project-card-tag {
+    font-size: .7rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: .4rem;
+  }
+  .project-card-title {
+    font-family: var(--ff-head); font-size: 1rem; font-weight: 700;
+    line-height: 1.3;
+  }
+  .project-card-arrow {
+    position: absolute; top: 1rem; right: 1rem;
+    width: 2rem; height: 2rem; background: var(--accent);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: .8rem; color: #080807; transform: scale(0);
+    transition: transform .3s cubic-bezier(.22,1,.36,1);
+  }
+  .project-card:hover .project-card-arrow { transform: scale(1); }
+
+  /* ---- CASE STUDIES ---- */
+  #casestudies { border-top: 1px solid var(--border); }
+  .case-list { margin-top: 4rem; display: flex; flex-direction: column; }
+  .case-item {
+    display: grid; grid-template-columns: auto 1fr 1fr;
+    gap: 3rem; align-items: center;
+    padding: 2.5rem 0; border-bottom: 1px solid var(--border);
+    transition: background .2s;
+  }
+  .case-item:first-child { border-top: 1px solid var(--border); }
+  .case-num {
+    font-family: var(--ff-head); font-size: 4rem; font-weight: 800;
+    color: rgba(237,232,216,.07); letter-spacing: -2px;
+    min-width: 80px;
+  }
+  .case-thumb {
+    aspect-ratio: 16/9; overflow: hidden; border-radius: 6px;
+    max-width: 280px;
+  }
+  .case-thumb img { height: 100%; transition: transform .5s ease; }
+  .case-item:hover .case-thumb img { transform: scale(1.06); }
+  .case-info {}
+  .case-tags { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .case-tag {
+    font-size: .7rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--accent);
+    border: 1px solid rgba(201,245,66,.2); border-radius: 100px; padding: .25rem .7rem;
+  }
+  .case-title {
+    font-family: var(--ff-body); font-size: 1.4rem; font-weight: 700;
+    letter-spacing: -.5px; margin-bottom: .75rem; line-height: 1.2;
+  }
+  .case-desc { color: var(--muted); font-size: .95rem; line-height: 1.6; font-weight: 300; }
+  .case-link {
+    display: inline-flex; align-items: center; gap: .5rem;
+    color: var(--accent); font-size: .85rem; font-weight: 600;
+    margin-top: 1.25rem; transition: gap .2s;
+  }
+  .case-link:hover { gap: .8rem; }
+  .case-link svg { transition: transform .2s; }
+  .case-link:hover svg { transform: translate(2px,-2px); }
+
+  /* ---- SKILLS ---- */
+  #skills { border-top: 1px solid var(--border); background: var(--bg2); }
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 5rem; margin-top: 4rem;
+  }
+  .skill-group-label {
+    font-size: .75rem; font-weight: 700; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 2rem;
+  }
+  .skill-item { margin-bottom: 1.5rem; }
+  .skill-name-row {
+    display: flex; justify-content: space-between;
+    font-size: .9rem; margin-bottom: .5rem;
+  }
+  .skill-pct { color: var(--muted); font-size: .8rem; }
+  .skill-track {
+    height: 2px; background: rgba(237,232,216,.08); border-radius: 1px; overflow: hidden;
+  }
+  .skill-fill {
+    height: 100%; background: var(--accent); border-radius: 1px;
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 1s cubic-bezier(.22,1,.36,1);
+  }
+  .skill-item.animated .skill-fill { transform: scaleX(1); }
+  .what-i-do { display: flex; flex-direction: column; gap: 1.5rem; }
+  .do-item {
+    padding: 1.5rem; border: 1px solid var(--border); border-radius: 8px;
+    transition: border-color .2s;
+  }
+  .do-item:hover { border-color: rgba(201,245,66,.2); }
+  .do-icon { font-size: 1.5rem; margin-bottom: .75rem; }
+  .do-title { font-family: var(--ff-head); font-weight: 700; font-size: 1rem; margin-bottom: .4rem; }
+  .do-desc { color: var(--muted); font-size: .875rem; line-height: 1.6; font-weight: 300; }
+
+  /* ---- CONTACT ---- */
+  #contact { border-top: 1px solid var(--border); }
+  .contact-inner {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; margin-top: 4rem;
+  }
+  .contact-left {}
+  .contact-left p {
+    color: var(--muted); font-size: 1.05rem; line-height: 1.8;
+    font-weight: 300; margin-top: 1.5rem; max-width: 400px;
+  }
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; margin-top: 2.5rem; }
+  .contact-link-item {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1.25rem 1.5rem; border: 1px solid var(--border);
+    border-radius: 8px; transition: border-color .2s, background .2s;
+  }
+  .contact-link-item:hover {
+    border-color: rgba(201,245,66,.3); background: rgba(201,245,66,.03);
+  }
+  .cl-icon {
+    width: 2.5rem; height: 2.5rem; background: rgba(201,245,66,.08);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .cl-text {}
+  .cl-label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+  .cl-val { font-size: .9rem; font-weight: 500; }
+  .contact-right { display: flex; flex-direction: column; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: .5rem; }
+  .form-label { font-size: .8rem; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+  .form-input {
+    background: rgba(237,232,216,.04); border: 1px solid var(--border);
+    border-radius: 6px; padding: .85rem 1.1rem;
+    font-family: var(--ff-body); font-size: .95rem; color: var(--text);
+    outline: none; transition: border-color .2s;
+    resize: none;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+  .form-submit {
+    background: var(--accent); color: #080807; border: none;
+    padding: 1rem; border-radius: 6px; font-family: var(--ff-body);
+    font-size: 1rem; font-weight: 700; cursor: none;
+    transition: transform .2s, box-shadow .2s; margin-top: .5rem;
+  }
+  .form-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,245,66,.25); }
+
+  /* ---- FOOTER ---- */
+  footer {
+    border-top: 1px solid var(--border); padding: 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo { font-family: var(--ff-head); font-weight: 800; font-size: 1.1rem; }
+  .footer-logo span { color: var(--accent); }
+  .footer-right {
+    color: var(--muted); font-size: .85rem;
+    display: flex; gap: 2rem; align-items: center;
+  }
+  .footer-right a { color: var(--muted); transition: color .2s; }
+  .footer-right a:hover { color: var(--accent); }
+
+  /* ---- UTIL ---- */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 1024px) {
+    .projects-grid { grid-template-columns: repeat(2, 1fr); }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .skills-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .case-item { grid-template-columns: 1fr; gap: 1.5rem; }
+    .case-num { display: none; }
+    .case-thumb { max-width: 100%; }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { display: none; }
+    .section { padding: 5rem 1.25rem; }
+    #hero { padding: 0 1.25rem 3rem; }
+    .hero-grid-num { display: none; }
+    .hero-sub { flex-direction: column; align-items: flex-start; }
+    .projects-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; text-align: center; }
+    .footer-right { flex-direction: column; gap: 1rem; }
+    .about-stats { grid-template-columns: 1fr 1fr; }
+    #cursor-dot, #cursor-ring { display: none; }
+    body { cursor: auto; }
+    .btn-primary, .btn-outline, .filter-btn, .form-submit { cursor: pointer; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-text">
+    <span>S</span><span>A</span><span>I</span><span>K</span><span>A</span><span>T</span>
+  </div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">S<span>.</span></a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#casestudies">Case Studies</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact" class="nav-cta">Let's Talk</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-num">01</div>
+  <div class="hero-badge">✦ Available for Freelance</div>
+  <h1 class="hero-headline">
+    <div class="line">
+      <span class="word">Designing</span>&nbsp;
+      <span class="word accent-word">experiences</span>
+    </div>
+    <div class="line">
+      <span class="word">that</span>&nbsp;
+      <span class="word">matter.</span>
+    </div>
+  </h1>
+  <div class="hero-sub">
+    <p class="hero-desc">
+      Hey, I'm <strong>Saikat</strong> — a UX/UI Designer from <strong>Dhaka, Bangladesh</strong> who turns complex problems into clean, intuitive digital products. I work across UX research, interaction design, and design systems.
+    </p>
+    <div class="hero-actions">
+      <a href="#work" class="btn-primary">View My Work ↓</a>
+      <a href="#contact" class="btn-outline">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item">UX Research <span class="dot">✦</span> Product Design <span class="dot">✦</span> UI Design <span class="dot">✦</span> Figma <span class="dot">✦</span> Prototyping <span class="dot">✦</span> Design Systems <span class="dot">✦</span> Mobile App UI <span class="dot">✦</span> SaaS Design <span class="dot">✦</span> Interaction Design <span class="dot">✦</span> User Research <span class="dot">✦</span></div>
+    <div class="marquee-item">UX Research <span class="dot">✦</span> Product Design <span class="dot">✦</span> UI Design <span class="dot">✦</span> Figma <span class="dot">✦</span> Prototyping <span class="dot">✦</span> Design Systems <span class="dot">✦</span> Mobile App UI <span class="dot">✦</span> SaaS Design <span class="dot">✦</span> Interaction Design <span class="dot">✦</span> User Research <span class="dot">✦</span></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="section-label reveal">About Me</div>
+  <div class="about-grid">
+    <div class="about-img-wrap reveal">
+      <img src="https://pps.services.adobe.com/api/profile/77CF1E2A65DCE2990A495FA3@AdobeID/image/0ebda4bf-8586-4398-9d83-b9bb0dff4362/276"
+           alt="Saikat — UX/UI Designer"
+           onerror="this.style.background='linear-gradient(135deg,#1a1a10 0%,#2a2a18 100%)';this.src=''" />
+      <div class="about-img-badge">UX/UI Designer</div>
+    </div>
+    <div class="about-content">
+      <h2 class="section-heading reveal">I design with <em>purpose</em></h2>
+      <p class="reveal reveal-d1">
+        I'm a UX Designer focused on creating <strong>intuitive, user-centered digital products</strong> for web and mobile. I bring together UX research, interaction design, and design systems to turn ideas into clear, functional interfaces that actually solve problems.
+      </p>
+      <p class="reveal reveal-d2">
+        Based in <strong>Dhaka, Bangladesh</strong>, I've worked across a range of industries — from healthcare apps and civic tech to SaaS platforms and fashion e-commerce. Every project starts with understanding real user pain points, not just aesthetics.
+      </p>
+      <p class="reveal reveal-d3">
+        Confident in <strong>Figma, prototyping, and cross-functional collaboration</strong>, I bring designs from concept to handoff with systems-thinking at every step. Currently available for freelance projects worldwide.
+      </p>
+      <div class="about-stats reveal reveal-d4">
+        <div class="stat-item">
+          <div class="stat-num">20+</div>
+          <div class="stat-label">Projects Completed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">1+</div>
+          <div class="stat-label">Years Experience</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">44+</div>
+          <div class="stat-label">Appreciations</div>
+        </div>
+      </div>
+      <div class="tools-row reveal">
+        <span class="tool-chip">Figma</span>
+        <span class="tool-chip">Prototyping</span>
+        <span class="tool-chip">User Research</span>
+        <span class="tool-chip">Design Systems</span>
+        <span class="tool-chip">FigJam</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SELECTED WORK (Dribbble shots) -->
+<section id="work" class="section">
+  <div class="section-label reveal">Selected Work</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1.5rem;">
+    <h2 class="section-heading reveal">Visual <em>shots</em></h2>
+    <a href="https://dribbble.com/ysaikat" target="_blank" rel="noopener" class="btn-outline reveal" style="white-space:nowrap">View All on Dribbble ↗</a>
+  </div>
+
+  <div class="filter-row reveal">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="web">Web & SaaS</button>
+    <button class="filter-btn" data-filter="mobile">Mobile Apps</button>
+    <button class="filter-btn" data-filter="ecommerce">E-Commerce</button>
+    <button class="filter-btn" data-filter="landing">Landing Pages</button>
+  </div>
+
+  <div class="projects-grid">
+
+    <a class="project-card" href="https://dribbble.com/shots/27168399" target="_blank" data-cat="web">
+      <img src="https://cdn.dribbble.com/userupload/47012053/file/3befd5751dcd7d1cb227549148caa4ea.png?resize=800x0" alt="Nexus.AI" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">SaaS · Dark Mode</div>
+        <div class="project-card-title">Nexus.AI — Automation Cockpit</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26990114" target="_blank" data-cat="web">
+      <img src="https://cdn.dribbble.com/userupload/46409734/file/76a2e46c13f0c104347dae034854d809.png?resize=800x0" alt="Portfolio Fix SaaS" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">SaaS · Landing Page</div>
+        <div class="project-card-title">UI/UX Portfolio Fix — SaaS Landing</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26971417" target="_blank" data-cat="web">
+      <img src="https://cdn.dribbble.com/userupload/46344539/file/fe6b0b95941598f6b0e420a98425ed5c.png?resize=800x0" alt="PeopleFlow HR" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">SaaS · HR Platform</div>
+        <div class="project-card-title">PeopleFlow HR — Landing Page</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26954167" target="_blank" data-cat="web">
+      <img src="https://cdn.dribbble.com/userupload/46288487/file/84aeb4f11eceef407fd6cd4c92d8340f.png?resize=800x0" alt="MeetMint SaaS" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">SaaS · Product Design</div>
+        <div class="project-card-title">MeetMint — SaaS Landing Page</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26949129" target="_blank" data-cat="web">
+      <img src="https://cdn.dribbble.com/userupload/46272509/file/8bf41c697bf5ac62ac4b944168be60c9.png?resize=800x0" alt="FlowPilot SaaS" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">SaaS · Dashboard</div>
+        <div class="project-card-title">FlowPilot — SaaS Landing Page</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/27022187" target="_blank" data-cat="web">
+      <img src="https://cdn.dribbble.com/userupload/46518279/file/53e379d9aa18b9b4406edc7f4b0c2c77.png?resize=800x0" alt="Software Discovery" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Web · Software</div>
+        <div class="project-card-title">Software Discovery Landing Page</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26848023" target="_blank" data-cat="mobile">
+      <img src="https://cdn.dribbble.com/userupload/45946461/file/59395a9ca4bc1c9615551c6aa2e3f79a.png?resize=800x0" alt="Fashion App" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Mobile · Fashion</div>
+        <div class="project-card-title">Fashion E-Commerce App UI</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26831416" target="_blank" data-cat="mobile">
+      <img src="https://cdn.dribbble.com/userupload/45890885/file/1101715c4b4b1fc2e106e6784610b7d5.png?resize=800x0" alt="Travel App" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Mobile · Travel</div>
+        <div class="project-card-title">Travel App Onboarding — Flight & Hotel</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26821209" target="_blank" data-cat="mobile">
+      <img src="https://cdn.dribbble.com/userupload/45856344/file/8b2cf053d13453b34f2015a621223de7.png?resize=800x0" alt="DailyChain" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Mobile · Wellness</div>
+        <div class="project-card-title">DailyChain — Habit & Wellness Tracker</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26797059" target="_blank" data-cat="mobile">
+      <img src="https://cdn.dribbble.com/userupload/45779528/file/f99c839479a9e3bad5d0cf2941683f53.png?resize=800x0" alt="Organic Grocery App" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Mobile · Grocery</div>
+        <div class="project-card-title">Fresh Organic Grocery App UI</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26758725" target="_blank" data-cat="mobile">
+      <img src="https://cdn.dribbble.com/userupload/45658923/file/61f05da294b78d337a5a83bd013e1be9.png?resize=800x0" alt="Luxury Fashion Mobile" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Mobile · Luxury</div>
+        <div class="project-card-title">Luxury Fashion E-Commerce App</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26995206" target="_blank" data-cat="mobile">
+      <img src="https://cdn.dribbble.com/userupload/46426594/file/91a40df12e0dcc51cd9b1917697d6bd4.png?resize=800x0" alt="Event Booking App" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Mobile · Events</div>
+        <div class="project-card-title">Social Event Discovery & Ticket Booking</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26917334" target="_blank" data-cat="ecommerce">
+      <img src="https://cdn.dribbble.com/userupload/46167173/file/8014fe60f067a8a118e5591c57a55907.png?resize=800x0" alt="Fashion Product Page" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">E-Commerce · Web</div>
+        <div class="project-card-title">Fashion E-Commerce Product Page</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26916437" target="_blank" data-cat="ecommerce">
+      <img src="https://cdn.dribbble.com/userupload/46164246/file/450e76a078d0240230c2a9a01fa0d655.png?resize=800x0" alt="Stylora Fashion" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">E-Commerce · Luxury</div>
+        <div class="project-card-title">Stylora — Luxury Fashion Landing</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26684240" target="_blank" data-cat="ecommerce">
+      <img src="https://cdn.dribbble.com/userupload/45421901/file/b7a9fc7f0c9e8d9bc67d793ed50d99dd.png?resize=800x0" alt="Mamar Shop" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">E-Commerce · App</div>
+        <div class="project-card-title">Mamar Shop — E-Commerce UI</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/27049669" target="_blank" data-cat="landing">
+      <img src="https://cdn.dribbble.com/userupload/46610852/file/9a4f69efce7440adef3a1493f27e66af.png?resize=800x0" alt="Coffee Landing" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Landing Page · F&B</div>
+        <div class="project-card-title">Coffee Landing Page</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/27136247" target="_blank" data-cat="landing">
+      <img src="https://cdn.dribbble.com/userupload/46904775/file/552c5c8dae08b838c3c247f006ccbe47.png?resize=800x0" alt="Fresh Organic" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Landing Page · Food</div>
+        <div class="project-card-title">Fresh Organic Goodness</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/27234801" target="_blank" data-cat="landing">
+      <img src="https://cdn.dribbble.com/userupload/47234981/file/bb363fbf60d74626880daece42803ff8.png?resize=800x0" alt="Groundwork Coffee" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Landing Page · Branding</div>
+        <div class="project-card-title">Groundwork Coffee Bar & Creative Studio</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26933995" target="_blank" data-cat="landing">
+      <img src="https://cdn.dribbble.com/userupload/46222504/file/3e0e215b91ed17d242e7156b7914efbc.png?resize=800x0" alt="Piquant Restaurant" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Landing Page · Restaurant</div>
+        <div class="project-card-title">Piquant — Italian Restaurant Website</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26903402" target="_blank" data-cat="landing">
+      <img src="https://cdn.dribbble.com/userupload/46123042/file/f2d3d98b2335c65c528e6477ede83225.png?resize=800x0" alt="Real Estate" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Web · Real Estate</div>
+        <div class="project-card-title">Agent-Centric Real Estate Website</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+    <a class="project-card" href="https://dribbble.com/shots/26698451" target="_blank" data-cat="landing">
+      <img src="https://cdn.dribbble.com/userupload/45467134/file/b74daaf51b1c44fb2d4856c0809776f0.png?resize=800x0" alt="LumaNest Interior" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-tag">Landing Page · Interior</div>
+        <div class="project-card-title">LumaNest — Interior Design Landing</div>
+      </div>
+      <div class="project-card-arrow">↗</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- CASE STUDIES -->
+<section id="casestudies" class="section">
+  <div class="section-label reveal">Deep Dives</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1.5rem;">
+    <h2 class="section-heading reveal">UX Case <em>Studies</em></h2>
+    <a href="https://www.behance.net/ysaikat" target="_blank" rel="noopener" class="btn-outline reveal" style="white-space:nowrap">View All on Behance ↗</a>
+  </div>
+
+  <div class="case-list">
+
+    <div class="case-item reveal">
+      <div class="case-num">01</div>
+      <div class="case-thumb">
+        <img src="https://mir-s3-cdn-cf.behance.net/projects/404/4f4c5b248077447.Y3JvcCwzOTI3LDMwNzIsMjA0LDA.png" alt="CNG Ride App" loading="lazy" />
+      </div>
+      <div class="case-info">
+        <div class="case-tags">
+          <span class="case-tag">UX Research</span>
+          <span class="case-tag">Voice UI</span>
+          <span class="case-tag">Mobile App</span>
+        </div>
+        <div class="case-title">Bangladesh's First Voice-First Ride App for CNG Drivers</div>
+        <p class="case-desc">Designing a voice-driven ride-hailing interface for CNG auto-rickshaw drivers in Bangladesh — addressing literacy barriers and real-world usability challenges through deep user research and inclusive design.</p>
+        <a href="https://www.behance.net/gallery/248077447/Bangladeshs-First-Voice-First-Ride-App-for-CNG-Drivers" target="_blank" class="case-link">
+          View Case Study <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="case-item reveal">
+      <div class="case-num">02</div>
+      <div class="case-thumb">
+        <img src="https://mir-s3-cdn-cf.behance.net/projects/404/f36f05247243933.Y3JvcCwzOTI3LDMwNzIsMTk0LDA.png" alt="VaxPlan" loading="lazy" />
+      </div>
+      <div class="case-info">
+        <div class="case-tags">
+          <span class="case-tag">Health Tech</span>
+          <span class="case-tag">UX/UI</span>
+          <span class="case-tag">Mobile App</span>
+        </div>
+        <div class="case-title">VaxPlan — Making Childhood Vaccination Simple</div>
+        <p class="case-desc">A comprehensive UX case study for a child vaccination tracking app — simplifying the complex scheduling and record-keeping challenges parents face with an intuitive, reassuring mobile experience.</p>
+        <a href="https://www.behance.net/gallery/247243933/VaxPlan-Making-Childhood-Vaccination-Simple" target="_blank" class="case-link">
+          View Case Study <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="case-item reveal">
+      <div class="case-num">03</div>
+      <div class="case-thumb">
+        <img src="https://mir-s3-cdn-cf.behance.net/projects/404/22931b244658147.Y3JvcCwzOTI3LDMwNzIsMTk0LDA.png" alt="Blood Donor App" loading="lazy" />
+      </div>
+      <div class="case-info">
+        <div class="case-tags">
+          <span class="case-tag">Health Tech</span>
+          <span class="case-tag">Social Impact</span>
+          <span class="case-tag">UX Research</span>
+        </div>
+        <div class="case-title">Blood Donor & Receiver App — Case Study</div>
+        <p class="case-desc">Designing a life-saving connection platform that bridges the gap between blood donors and those in urgent need — with speed, trust, and clarity at the core of every design decision.</p>
+        <a href="https://www.behance.net/gallery/244658147/Blood-Donor-Receiver-App-Case-Study" target="_blank" class="case-link">
+          View Case Study <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="case-item reveal">
+      <div class="case-num">04</div>
+      <div class="case-thumb">
+        <img src="https://mir-s3-cdn-cf.behance.net/projects/404/b247ba237764423.Y3JvcCw1MTEzLDQwMDAsMjQwLDA.jpg" alt="Namjari App" loading="lazy" />
+      </div>
+      <div class="case-info">
+        <div class="case-tags">
+          <span class="case-tag">Civic Tech</span>
+          <span class="case-tag">Gov't Services</span>
+          <span class="case-tag">UX/UI</span>
+        </div>
+        <div class="case-title">Namjari App — Land Mutation UI/UX Case Study</div>
+        <p class="case-desc">Redesigning the land mutation (Namjari) process in Bangladesh — transforming a historically complex and paper-heavy government process into a streamlined digital experience accessible to all citizens.</p>
+        <a href="https://www.behance.net/gallery/237764423/Namjari-App-(Land-Mutation)-UIUX-Case-Study" target="_blank" class="case-link">
+          View Case Study <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="case-item reveal">
+      <div class="case-num">05</div>
+      <div class="case-thumb">
+        <img src="https://mir-s3-cdn-cf.behance.net/projects/404/7318b8237760221.Y3JvcCw0NTE2LDM1MzIsMCww.jpg" alt="Online GD App" loading="lazy" />
+      </div>
+      <div class="case-info">
+        <div class="case-tags">
+          <span class="case-tag">Civic Tech</span>
+          <span class="case-tag">Legal</span>
+          <span class="case-tag">Mobile App</span>
+        </div>
+        <div class="case-title">Online GD Mobile App — UX/UI Case Study</div>
+        <p class="case-desc">A UX redesign of the General Diary (GD) filing process in Bangladesh — making it possible for citizens to file police reports online with ease, removing friction from a traditionally intimidating process.</p>
+        <a href="https://www.behance.net/gallery/237760221/Online-GD-Mobile-App-UXUI-Case-Study" target="_blank" class="case-link">
+          View Case Study <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="section">
+  <div class="section-label reveal">Capabilities</div>
+  <h2 class="section-heading reveal">What I <em>bring</em></h2>
+  <div class="skills-grid">
+    <div>
+      <p class="skill-group-label reveal">Design Skills</p>
+      <div class="skill-item reveal" style="--w:.95">
+        <div class="skill-name-row"><span>UX Research & Strategy</span><span class="skill-pct">95%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:95%"></div></div>
+      </div>
+      <div class="skill-item reveal reveal-d1" style="--w:.92">
+        <div class="skill-name-row"><span>UI Visual Design</span><span class="skill-pct">92%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:92%"></div></div>
+      </div>
+      <div class="skill-item reveal reveal-d2">
+        <div class="skill-name-row"><span>Interaction Design</span><span class="skill-pct">90%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:90%"></div></div>
+      </div>
+      <div class="skill-item reveal reveal-d3">
+        <div class="skill-name-row"><span>Design Systems</span><span class="skill-pct">88%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:88%"></div></div>
+      </div>
+      <div class="skill-item reveal reveal-d4">
+        <div class="skill-name-row"><span>Prototyping & Testing</span><span class="skill-pct">85%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:85%"></div></div>
+      </div>
+    </div>
+    <div>
+      <p class="skill-group-label reveal">What I Do</p>
+      <div class="what-i-do">
+        <div class="do-item reveal">
+          <div class="do-icon">🔍</div>
+          <div class="do-title">UX Research</div>
+          <p class="do-desc">User interviews, competitive analysis, usability testing, and heuristic evaluation — turning data into design decisions.</p>
+        </div>
+        <div class="do-item reveal reveal-d1">
+          <div class="do-icon">🎨</div>
+          <div class="do-title">UI Design</div>
+          <p class="do-desc">Pixel-perfect visual interfaces with strong typography, color systems, and component libraries ready for handoff.</p>
+        </div>
+        <div class="do-item reveal reveal-d2">
+          <div class="do-icon">📱</div>
+          <div class="do-title">Product Design</div>
+          <p class="do-desc">End-to-end product thinking — from wireframes and flows to final high-fidelity screens for web and mobile.</p>
+        </div>
+        <div class="do-item reveal reveal-d3">
+          <div class="do-icon">🏗️</div>
+          <div class="do-title">Design Systems</div>
+          <p class="do-desc">Scalable, consistent component libraries and design tokens that keep teams aligned and ship faster.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section">
+  <div class="section-label reveal">Get in Touch</div>
+  <h2 class="section-heading reveal">Let's build something <em>great</em></h2>
+  <div class="contact-inner">
+    <div class="contact-left reveal">
+      <p>Have a project in mind? I'd love to hear about it. I'm currently available for freelance projects, full-time opportunities, and design consultations.</p>
+      <div class="contact-links">
+        <a href="mailto:saeid.uix03@gmail.com" class="contact-link-item">
+          <div class="cl-icon">✉️</div>
+          <div class="cl-text">
+            <div class="cl-label">Email</div>
+            <div class="cl-val">saeid.uix03@gmail.com</div>
+          </div>
+        </a>
+        <a href="https://www.behance.net/ysaikat" target="_blank" class="contact-link-item">
+          <div class="cl-icon">🎨</div>
+          <div class="cl-text">
+            <div class="cl-label">Behance</div>
+            <div class="cl-val">behance.net/ysaikat</div>
+          </div>
+        </a>
+        <a href="https://dribbble.com/ysaikat" target="_blank" class="contact-link-item">
+          <div class="cl-icon">🏀</div>
+          <div class="cl-text">
+            <div class="cl-label">Dribbble</div>
+            <div class="cl-val">dribbble.com/ysaikat</div>
+          </div>
+        </a>
+        <a href="https://www.linkedin.com/in/ysaikat" target="_blank" class="contact-link-item">
+          <div class="cl-icon">💼</div>
+          <div class="cl-text">
+            <div class="cl-label">LinkedIn</div>
+            <div class="cl-val">linkedin.com/in/ysaikat</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="contact-right reveal reveal-d2">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input type="text" class="form-input" placeholder="John Doe" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" placeholder="john@company.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Project Type</label>
+        <input type="text" class="form-input" placeholder="Mobile App, SaaS, Website..." />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tell me about your project</label>
+        <textarea class="form-input" rows="4" placeholder="Describe your project, goals, and timeline..."></textarea>
+      </div>
+      <button class="form-submit" onclick="alert('Thanks! I\'ll get back to you soon.')">Send Message →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">S<span>.</span>aikat</div>
+  <div class="footer-right">
+    <a href="https://www.behance.net/ysaikat" target="_blank">Behance</a>
+    <a href="https://dribbble.com/ysaikat" target="_blank">Dribbble</a>
+    <a href="https://www.linkedin.com/in/ysaikat" target="_blank">LinkedIn</a>
+    <span>© 2026 Saikat. All rights reserved.</span>
+  </div>
+</footer>
+
+<script>
+  // --- CURSOR ---
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  // --- NAV SCROLL ---
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // --- REVEAL ON SCROLL ---
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // --- SKILL BARS ---
+  const skillObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('animated'); });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.skill-item').forEach(el => skillObserver.observe(el));
+
+  // --- FILTER ---
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.project-card');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      cards.forEach(card => {
+        if (f === 'all' || card.dataset.cat === f) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
