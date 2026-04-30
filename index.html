@@ -426,6 +426,7 @@
   }
   .skill-item.animated .skill-fill { transform: scaleX(1); }
   .what-i-do { display: flex; flex-direction: column; gap: 1.5rem; }
+  .what-i-do-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; }
   .do-item {
     padding: 1.5rem; border: 1px solid var(--border); border-radius: 8px;
     transition: border-color .2s;
@@ -510,20 +511,110 @@
     .case-num { display: none; }
     .case-thumb { max-width: 100%; }
   }
+
   @media (max-width: 768px) {
+    /* Nav */
     nav { padding: 1rem 1.25rem; }
     .nav-links { display: none; }
-    .section { padding: 5rem 1.25rem; }
-    #hero { padding: 0 1.25rem 3rem; }
+    /* Show CTA button in nav on mobile */
+    .nav-links .nav-cta {
+      display: inline-flex !important;
+      position: fixed;
+      bottom: 1.5rem; right: 1.25rem;
+      z-index: 200;
+      box-shadow: 0 4px 20px rgba(201,245,66,.3);
+      font-size: .85rem !important;
+      padding: .6rem 1.1rem !important;
+    }
+
+    /* Hero */
+    #hero { padding: 0 1.25rem 3.5rem; min-height: 100svh; }
     .hero-grid-num { display: none; }
-    .hero-sub { flex-direction: column; align-items: flex-start; }
+    .hero-headline {
+      font-size: clamp(2.6rem, 13vw, 4.5rem);
+      letter-spacing: -1px;
+      line-height: 1.0;
+    }
+    .hero-badge { margin-bottom: 1.2rem; font-size: .75rem; }
+    .hero-sub {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 1.5rem;
+      gap: 1.5rem;
+    }
+    .hero-desc { font-size: .95rem; max-width: 100%; }
+    .hero-actions { flex-direction: column; width: 100%; gap: .75rem; }
+    .hero-actions .btn-primary,
+    .hero-actions .btn-outline {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* Sections */
+    .section { padding: 4rem 1.25rem; }
+    .section-heading {
+      font-size: clamp(1.9rem, 8vw, 3rem);
+      letter-spacing: -.5px;
+    }
+
+    /* About */
+    .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .about-img-wrap { aspect-ratio: 3/4; max-height: 420px; }
+    .about-stats { grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .stat-num { font-size: 2rem; }
+    .about-content { padding-top: 0; }
+    .tools-row { gap: .4rem; }
+
+    /* Skills / What I bring */
+    .what-i-do-grid {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      gap: 1rem !important;
+    }
+    .do-item { padding: 1.2rem; }
+
+    /* Projects */
     .projects-grid { grid-template-columns: 1fr; }
-    footer { flex-direction: column; text-align: center; }
-    .footer-right { flex-direction: column; gap: 1rem; }
-    .about-stats { grid-template-columns: 1fr 1fr; }
+    .filter-row { gap: .4rem; }
+    .filter-btn { font-size: .8rem; padding: .4rem .9rem; }
+
+    /* Case studies */
+    .case-item { gap: 1rem; padding: 1.5rem 0; }
+    .case-thumb { aspect-ratio: 16/9; }
+    .case-title { font-size: 1rem; }
+    .case-desc { font-size: .85rem; }
+
+    /* Contact */
+    .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+    .contact-link-item { padding: 1rem 1.2rem; }
+    .form-input { font-size: .9rem; }
+
+    /* Footer */
+    footer { flex-direction: column; text-align: center; padding: 2rem 1.25rem; }
+    .footer-right { flex-direction: column; gap: .75rem; }
+
+    /* Cursor */
     #cursor-dot, #cursor-ring { display: none; }
     body { cursor: auto; }
-    .btn-primary, .btn-outline, .filter-btn, .form-submit { cursor: pointer; }
+    .btn-primary, .btn-outline, .filter-btn, .form-submit,
+    .contact-link-item, .project-card, .case-link { cursor: pointer; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-headline {
+      font-size: clamp(2.2rem, 11.5vw, 2.8rem);
+      letter-spacing: -.5px;
+    }
+    .hero-badge { font-size: .7rem; padding: .35rem .85rem; }
+    .section-heading { font-size: clamp(1.7rem, 7.5vw, 2.4rem); letter-spacing: 0; }
+    .about-stats { grid-template-columns: 1fr 1fr 1fr; gap: .75rem; }
+    .stat-num { font-size: 1.6rem; }
+    .stat-label { font-size: .75rem; }
+    .what-i-do-grid { grid-template-columns: 1fr !important; }
+    .hero-actions .btn-primary,
+    .hero-actions .btn-outline { font-size: .875rem; padding: .75rem 1.5rem; }
+    .contact-links { gap: .75rem; }
   }
 </style>
 </head>
@@ -968,7 +1059,7 @@
   <div class="skills-grid" style="grid-template-columns:1fr">
     <div>
       <p class="skill-group-label reveal">What I Do</p>
-      <div class="what-i-do" style="display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem">
+      <div class="what-i-do" class="what-i-do-grid">
         <div class="do-item reveal">
           <div class="do-icon">🔍</div>
           <div class="do-title">UX Research</div>
